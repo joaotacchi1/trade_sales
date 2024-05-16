@@ -30,7 +30,7 @@ class Product(Base):
 class Sale(Base):
     __tablename__ = "sales"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement='auto')
     product_code = Column(String, index=True)
     unit_price = Column(Float)
     quantity = Column(Integer)
@@ -48,6 +48,7 @@ def get_db():
         db.close()
 
 class ProductCreate(BaseModel):
+    id: int
     code: str
     description: str
     unit_price: float
@@ -56,40 +57,92 @@ class ProductCreate(BaseModel):
     expiration_date: date
 
 class SaleCreate(BaseModel):
+    id: int
     product_code: str
     unit_price: float
     buyer: str
-    sale_date: date
 
-# Rotas da API
-@app.post("/products")
+@app.post("/products/", response_model=ProductCreate)
 def create_product(product: ProductCreate, db: Session = Depends(get_db)):
     db_product = Product(**product.model_dump())
     db.add(db_product)
     db.commit()
     db.refresh(db_product)
-    return db_product.__dict__
+    return db_product
 
-@app.get("/products/{product_code}/")
-def get_product(product_code: str, db: Session = Depends(get_db)):
-    product = db.query(Product).filter(Product.code == product_code).first()
+@app.get("/products/{product_id}", response_model=ProductCreate)
+def read_product(product_id: int, db: Session = Depends(get_db)):
+    product = db.query(Product).filter(Product.id == product_id).first()
     if product is None:
         raise HTTPException(status_code=404, detail="Product not found")
     return product
 
-@app.post("/sales/")
-def create_sale(sale: SaleCreate, db: Session = Depends(get_db)):
-    product = db.query(Product).filter(Product.code == sale.product_code).first()
-    if product is None:
+@app.get("/products/", response_model=list[ProductCreate])
+def real_all_products(db: Session = Depends(get_db)):
+    products = db.query(Product).all()
+    if products is None:
+        raise HTTPException(status_code=404, detail="Products not found")
+    return products
+
+@app.put("/products/{product_id}", response_model=ProductCreate)
+def update_product(product_id: int, product: ProductCreate, db: Session = Depends(get_db)):
+    db_product = db.query(Product).filter(Product.id == product_id).first()
+    if db_product is None:
         raise HTTPException(status_code=404, detail="Product not found")
-    if sale.unit_price != product.unit_price:
-        raise HTTPException(status_code=400, detail="Unit price mismatch")
-    if sale.quantity > product.quantity:
-        raise HTTPException(status_code=400, detail="Insufficient quantity")
-    
-    product.quantity -= sale.quantity
+    for key, value in product.model_dump().items():
+        setattr(db_product, key, value)
+    db.commit()
+    db.refresh(db_product)
+    return db_product
+
+@app.delete("/products/{product_id}")
+def delete_product(product_id: int, db: Session = Depends(get_db)):
+    db_product = db.query(Product).filter(Product.id == product_id).first()
+    if db_product is None:
+        raise HTTPException(status_code=404, detail="Product not found")
+    db.delete(db_product)
+    db.commit()
+    return {"message": "Product deleted successfully"}
+
+# Rotas da API para CRUD de vendas
+@app.post("/sales/", response_model=SaleCreate)
+def create_sale(sale: SaleCreate, db: Session = Depends(get_db)):
     db_sale = Sale(**sale.model_dump())
     db.add(db_sale)
     db.commit()
     db.refresh(db_sale)
     return db_sale
+
+@app.get("/sales/{sale_id}", response_model=SaleCreate)
+def read_sale(sale_id: int, db: Session = Depends(get_db)):
+    sale = db.query(Sale).filter(Sale.id == sale_id).first()
+    if sale is None:
+        raise HTTPException(status_code=404, detail="Sale not found")
+    return sale
+
+@app.get("/products/", response_model=list[SaleCreate])
+def real_all_sales(db: Session = Depends(get_db)):
+    sales = db.query(Sale).all()
+    if sales is None:
+        raise HTTPException(status_code=404, detail="Sales not found")
+    return sales
+
+@app.put("/sales/{sale_id}", response_model=SaleCreate)
+def update_sale(sale_id: int, sale: SaleCreate, db: Session = Depends(get_db)):
+    db_sale = db.query(Sale).filter(Sale.id == sale_id).first()
+    if db_sale is None:
+        raise HTTPException(status_code=404, detail="Sale not found")
+    for key, value in sale.model_dump().items():
+        setattr(db_sale, key, value)
+    db.commit()
+    db.refresh(db_sale)
+    return db_sale
+
+@app.delete("/sales/{sale_id}")
+def delete_sale(sale_id: int, db: Session = Depends(get_db)):
+    db_sale = db.query(Sale).filter(Sale.id == sale_id).first()
+    if db_sale is None:
+        raise HTTPException(status_code=404, detail="Sale not found")
+    db.delete(db_sale)
+    db.commit()
+    return {"message": "Sale deleted successfully"}
