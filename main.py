@@ -28,12 +28,6 @@ class Product(Base):
 
     sales = relationship('Sale', back_populates='product')
 
-'''class Item(Base):
-    __tablename__ = 'itens'
-
-    cod = Column(String, primary_key=True)
-    describe = Column(String)'''
-
 # Definição do modelo de Venda
 class Sale(Base):
     __tablename__ = "sales"
@@ -65,57 +59,11 @@ class ProductCreate(BaseModel):
     quantity: int
     registration_date: date
 
-'''class ItemCreate(BaseModel):
-    cod: str
-    describe: str'''
-
 class SaleCreate(BaseModel):
     id_product: int
     product_code: str
     quantity: float
     sale_date: date
-
-'''@app.post("/itens/", response_model=ItemCreate)
-def create_item(item: ItemCreate, db: Session = Depends(get_db)):
-    db_item = Item(**item.model_dump())
-    db.add(db_item)
-    db.commit()
-    db.refresh(db_item)
-    return db_item
-
-@app.get("/itens/{item_code}", response_model=ItemCreate)
-def read_item(item_code: str, db: Session = Depends(get_db)):
-    item = db.query(Item).filter(Item.cod == item_code).first()
-    if item is None:
-        raise HTTPException(status_code=404, detail="item not found")
-    return item
-
-@app.get("/itens/", response_model=list[ItemCreate])
-def real_all_itens(db: Session = Depends(get_db)):
-    itens = db.query(Item).all()
-    if itens is None:
-        raise HTTPException(status_code=404, detail="Itens not found")
-    return itens
-
-@app.put("/itens/{item_code}", response_model=ItemCreate)
-def update_item(item_code: str, item: ItemCreate, db: Session = Depends(get_db)):
-    db_item = db.query(Item).filter(Item.cod == item_code).first()
-    if db_item is None:
-        raise HTTPException(status_code=404, detail="Item not found")
-    for key, value in item.model_dump().items():
-        setattr(db_item, key, value)
-    db.commit()
-    db.refresh(db_item)
-    return db_item
-
-@app.delete("/itens/{item_code}")
-def delete_item(item_code: int, db: Session = Depends(get_db)):
-    db_item = db.query(Item).filter(Item.cod == item_code).first()
-    if db_item is None:
-        raise HTTPException(status_code=404, detail="Item not found")
-    db.delete(db_item)
-    db.commit()
-    return {"message": "Item deleted successfully"}'''
 
 #CRUD para tabela produtos
 @app.post("/products/", response_model=ProductCreate)
