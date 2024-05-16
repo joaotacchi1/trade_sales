@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy import create_engine, Column, Integer, String, Float, Date, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Session, relationship
+from sqlalchemy.orm import sessionmaker, Session, relationship, joinedload
 from datetime import date, datetime
 from pydantic import BaseModel
 
@@ -9,7 +9,7 @@ from pydantic import BaseModel
 app = FastAPI()
 
 # Configuração do SQLAlchemy
-DATABASE_URL = "postgresql://postgres:000@localhost:5432/troca"
+DATABASE_URL = "postgresql://postgres:123@localhost:5432/troca"
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
@@ -70,6 +70,7 @@ class ProductCreate(BaseModel):
     describe: str'''
 
 class SaleCreate(BaseModel):
+    id_product: int
     product_code: str
     quantity: float
     sale_date: date
@@ -176,9 +177,18 @@ def create_sale(sale: SaleCreate, db: Session = Depends(get_db)):
 
     return db_sale
 
-@app.get("/sales/{sale_id}", response_model=SaleCreate)
-def read_sale(sale_id: int, db: Session = Depends(get_db)):
-    sale = db.query(Sale).filter(Sale.id == sale_id).first()
+class SaleResponse(BaseModel):
+    id_product: int
+    product_code: str
+    quantity: float
+    sale_date: date
+    description: str
+    unit_price: float
+
+@app.get("/sales/{id_product}", response_model=SaleResponse)
+def read_sale(id_product: int, db: Session = Depends(get_db)):
+    sale = db.query(Sale).join(Product).add_columns(Sale.id, Sale.id_product, Sale.quantity, Sale.sale_date, Sale.product_code, Product.description, Product.unit_price).\
+    filter(Sale.id_product == id_product).first()
     if sale is None:
         raise HTTPException(status_code=404, detail="Sale not found")
     return sale
