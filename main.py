@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, Depends
-from sqlalchemy import create_engine, Column, Integer, String, Float, Date
+from sqlalchemy import create_engine, Column, Integer, String, Float, Date, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import sessionmaker, Session, relationship
 from datetime import date, datetime
 from pydantic import BaseModel
 
@@ -19,22 +19,33 @@ class Product(Base):
     __tablename__ = "products"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement='auto')
-    code = Column(String, unique=True, index=True)
+    code = Column(String, index=True)
     description = Column(String)
     unit_price = Column(Float)
-    quantity = Column(Integer)
+    quantity = Column(Float)
     registration_date = Column(Date, default=datetime.now)
-    expiration_date = Column(Date)
+    #expiration_date = Column(Date)
+
+    sales = relationship('Sale', back_populates='product')
+
+'''class Item(Base):
+    __tablename__ = 'itens'
+
+    cod = Column(String, primary_key=True)
+    describe = Column(String)'''
 
 # Definição do modelo de Venda
 class Sale(Base):
     __tablename__ = "sales"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement='auto')
+    id_product = Column(Integer, ForeignKey('products.id')) #chave estrangeira para id da tabela product
+    product = relationship("Product", back_populates="sales")
     product_code = Column(String, index=True)
     unit_price = Column(Float)
-    quantity = Column(Integer)
+    quantity = Column(Float)
     sale_date = Column(Date, default=datetime.now)
+    #expiration_date = Column(Date)
 
 # Criar tabelas no banco de dados
 Base.metadata.create_all(bind=engine)
@@ -48,20 +59,64 @@ def get_db():
         db.close()
 
 class ProductCreate(BaseModel):
-    id: int
     code: str
     description: str
     unit_price: float
     quantity: int
     registration_date: date
-    expiration_date: date
+
+'''class ItemCreate(BaseModel):
+    cod: str
+    describe: str'''
 
 class SaleCreate(BaseModel):
-    id: int
     product_code: str
-    unit_price: float
-    buyer: str
+    quantity: float
+    sale_date: date
 
+'''@app.post("/itens/", response_model=ItemCreate)
+def create_item(item: ItemCreate, db: Session = Depends(get_db)):
+    db_item = Item(**item.model_dump())
+    db.add(db_item)
+    db.commit()
+    db.refresh(db_item)
+    return db_item
+
+@app.get("/itens/{item_code}", response_model=ItemCreate)
+def read_item(item_code: str, db: Session = Depends(get_db)):
+    item = db.query(Item).filter(Item.cod == item_code).first()
+    if item is None:
+        raise HTTPException(status_code=404, detail="item not found")
+    return item
+
+@app.get("/itens/", response_model=list[ItemCreate])
+def real_all_itens(db: Session = Depends(get_db)):
+    itens = db.query(Item).all()
+    if itens is None:
+        raise HTTPException(status_code=404, detail="Itens not found")
+    return itens
+
+@app.put("/itens/{item_code}", response_model=ItemCreate)
+def update_item(item_code: str, item: ItemCreate, db: Session = Depends(get_db)):
+    db_item = db.query(Item).filter(Item.cod == item_code).first()
+    if db_item is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+    for key, value in item.model_dump().items():
+        setattr(db_item, key, value)
+    db.commit()
+    db.refresh(db_item)
+    return db_item
+
+@app.delete("/itens/{item_code}")
+def delete_item(item_code: int, db: Session = Depends(get_db)):
+    db_item = db.query(Item).filter(Item.cod == item_code).first()
+    if db_item is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+    db.delete(db_item)
+    db.commit()
+    return {"message": "Item deleted successfully"}'''
+
+#CRUD para tabela produtos
 @app.post("/products/", response_model=ProductCreate)
 def create_product(product: ProductCreate, db: Session = Depends(get_db)):
     db_product = Product(**product.model_dump())
@@ -103,7 +158,9 @@ def delete_product(product_id: int, db: Session = Depends(get_db)):
     db.delete(db_product)
     db.commit()
     return {"message": "Product deleted successfully"}
-
+#-----------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------
 # Rotas da API para CRUD de vendas
 @app.post("/sales/", response_model=SaleCreate)
 def create_sale(sale: SaleCreate, db: Session = Depends(get_db)):
@@ -111,6 +168,12 @@ def create_sale(sale: SaleCreate, db: Session = Depends(get_db)):
     db.add(db_sale)
     db.commit()
     db.refresh(db_sale)
+
+    product = db.query(Product).filter(Product.code == sale.product_code).first()
+    if product:
+        product.quantity -= sale.quantity  # Diminuir a quantidade vendida
+        db.commit()  # Commit para salvar a atualização na quantidade do produto
+
     return db_sale
 
 @app.get("/sales/{sale_id}", response_model=SaleCreate)
@@ -120,7 +183,7 @@ def read_sale(sale_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Sale not found")
     return sale
 
-@app.get("/products/", response_model=list[SaleCreate])
+@app.get("/sales/", response_model=list[SaleCreate])
 def real_all_sales(db: Session = Depends(get_db)):
     sales = db.query(Sale).all()
     if sales is None:
