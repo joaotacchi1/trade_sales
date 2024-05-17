@@ -29,7 +29,7 @@ def create_sale(sale: SaleCreate, db: Session = Depends(get_db)):
 
 @router.get("/sales/{id_product}", response_model=SaleResponse)
 def read_sale(id_product: int, db: Session = Depends(get_db)):
-    sale = db.query(Sale).join(Product).add_columns(Sale.id, Sale.id_product, Sale.quantity, Sale.sale_date, Sale.product_code, Product.description, Product.unit_price).\
+    sale = db.query(Sale).join(Product).add_columns(Sale.id, Sale.id_product, Sale.quantity, Sale.sale_date, Product.code, Product.description, Product.unit_price).\
     filter(Sale.id_product == id_product).first()
     if sale is None:
         raise HTTPException(status_code=404, detail="Sale not found")

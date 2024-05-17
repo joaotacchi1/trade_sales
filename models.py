@@ -22,6 +22,12 @@ class Sale(Base):
     id_product = Column(Integer, ForeignKey('products.id')) #chave estrangeira para id da tabela product
     product = relationship("Product", back_populates="sales")
     product_code = Column(String, index=True)
-    unit_price = Column(Float)
+    unit_price = Column(Float) #tirar, talvez?
     quantity = Column(Float)
     sale_date = Column(Date, default=datetime.now)
+
+class Cupom(Base):
+    __tablename__ = 'cupom'
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement='auto')
+    array = Column(String)
