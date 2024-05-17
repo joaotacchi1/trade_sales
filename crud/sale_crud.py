@@ -1,7 +1,7 @@
 from fastapi import Depends, HTTPException, APIRouter
 from sqlalchemy.orm import Session
-from models import Sale, Product
-from schemas import SaleCreate, SaleResponse
+from models import Sale, Product, Cupom
+from schemas import SaleCreate, SaleResponse, CupomCreate
 from database import SessionLocal
 
 router = APIRouter()
@@ -14,7 +14,7 @@ def get_db():
         db.close()
 
 @router.post("/sales/", response_model=SaleCreate)
-def create_sale(sale: SaleCreate, db: Session = Depends(get_db)):
+def create_sale(sale: SaleCreate, cupom: CupomCreate, db: Session = Depends(get_db)):
     db_sale = Sale(**sale.model_dump())
     db.add(db_sale)
     db.commit()

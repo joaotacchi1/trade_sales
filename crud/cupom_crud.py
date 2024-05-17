@@ -1,7 +1,7 @@
 from fastapi import Depends, HTTPException, APIRouter
 from sqlalchemy.orm import Session
-from models import Cupom
-from schemas import CupomCreate
+from models import Cupom, Sale
+from schemas import CupomCreate, SaleCreate
 from database import SessionLocal
 
 router = APIRouter()
@@ -28,12 +28,15 @@ def get_all_cupons(db: Session = Depends(get_db)):
     return cupom
 
 @router.post("/cupom/", response_model=CupomCreate)
-def create_cupom(cupom: CupomCreate, db: Session = Depends(get_db)):
-    db_cupom = Cupom(**cupom.model_dump())
-    db.add(db_cupom)
-    db.commit()
-    db.refresh(db_cupom)
-    return db_cupom
+def create_cupom(cupom: CupomCreate, sale: SaleCreate, db: Session = Depends(get_db)):
+    create_sale = db.query(Sale).filter(Sale.id_product == sale.id_product).first() #LINHA PARA ARRUMAR
+    if create_sale:
+        db_cupom = Cupom(**cupom.model_dump())
+        db.add(db_cupom)
+        db.commit()
+        db.refresh(db_cupom)
+        return db_cupom
+    raise HTTPException(status_code=404, detail="Sale not found for the created cupom")
 
 @router.put("/cupom/{cupom_id}", response_model=CupomCreate)
 def update_cupom(cupom_id: int, cupom: CupomCreate, db: Session = Depends(get_db)):
