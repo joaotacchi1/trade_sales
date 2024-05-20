@@ -15,7 +15,7 @@ const Login: React.FC = () => {
       await login(loginInput, passwordInput);
       // Se o login for bem-sucedido, redirecione o usuário para a página principal ou outra página desejada
       // Você pode fazer isso utilizando, por exemplo, o React Router
-      navigate('/funcionarios/new');
+      navigate('/produtos');
     } catch (error) {
       if ((error as any).response) {
         if ((error as any).response.status === 401) {
@@ -33,7 +33,7 @@ const Login: React.FC = () => {
   useEffect(() => {
     // Verifique se o usuário já está logado
     if (authenticated) {
-      navigate('/funcionarios');  // Redirecione para /funcionarios se o usuário estiver logado
+      navigate('/produtos');  // Redirecione para /funcionarios se o usuário estiver logado
     }
   }, [authenticated, navigate]);
 

@@ -20,19 +20,14 @@ const Navbar = () => {
                 <span></span>
             </div>
             <ul className={`navbar-list ${isMobileMenuOpen ? 'open' : ''}`}>
-                {/* <li><Link to="/login" onClick={toggleMobileMenu}>Login</Link></li>
-                <li><Link to="/register" onClick={toggleMobileMenu}>Register</Link></li>
-                <li><Link to="/dashboard" onClick={toggleMobileMenu}>Dashboard</Link></li> */}
-                <li><Link to="/armario" onClick={toggleMobileMenu}>Armario</Link></li>
-                <li><Link to="/funcionarios" onClick={toggleMobileMenu}>Ver Funcionarios</Link></li>
-                <li><Link to="/cadastrarfuncionario" onClick={toggleMobileMenu}>Cadastrar Funcionario</Link></li>
-                <li><Link to="/funcionarios/new" onClick={toggleMobileMenu}>Novos Funcionarios</Link></li>
-                <li><Link to="/estoque" onClick={toggleMobileMenu}>Estoque</Link></li>
+                <li><Link to="/produtos" onClick={toggleMobileMenu}>Produtos</Link></li>
+                <li><Link to="/vendas" onClick={toggleMobileMenu}>Vendas</Link></li>
+                <li><Link to="/cupons" onClick={toggleMobileMenu}>Cupons</Link></li>
             </ul>
             <div className="user-actions">
                 <span>Olá, {useAuth().user?.name}</span>
-                <button className='btn btn-danger'>
-                    <Link to="/login" className='btn' onClick={logout}>Sair</Link>
+                <button className='btn btn-danger' onClick={logout}>
+                    <Link to="/login" className='btn' >Sair</Link>
                 </button>
             </div>
         </nav>
