@@ -31,3 +31,12 @@ class Cupom(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement='auto')
     array = Column(String)
+
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, unique=True, index=True)
+    name = Column(String)
+    login = Column(String, unique=True, index=True)
+    password = Column(String)
+    role = Column(String)
