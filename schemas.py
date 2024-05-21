@@ -6,7 +6,6 @@ class ProductCreate(BaseModel):
     description: str
     unit_price: float
     quantity: int
-    registration_date: date
 
 class SaleCreate(BaseModel):
     id_product: int
