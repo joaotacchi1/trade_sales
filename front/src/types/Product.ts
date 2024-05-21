@@ -5,4 +5,5 @@ export type Product = {
     unit_price: number;
     quantity: number;
     registration_date: string;
+    obs: string;
 }

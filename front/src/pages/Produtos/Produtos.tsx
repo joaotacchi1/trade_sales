@@ -38,6 +38,7 @@ const Produtos: React.FC = () => {
     const [description, setDescription] = useState('');
     const [unit_price, setUnit_price] = useState(0);
     const [quantity, setQuantity] = useState(0);
+    const [obs, setObs] = useState('');
 
     const handleCreateProduct = async (e: FormEvent) => {
         e.preventDefault();
@@ -46,7 +47,8 @@ const Produtos: React.FC = () => {
                 code,
                 description,
                 unit_price,
-                quantity
+                quantity,
+                obs
             };
             await api.post('/products/', data);
             console.log(data);
@@ -68,6 +70,10 @@ const Produtos: React.FC = () => {
                     <div className="col-sm-3">
                         <label htmlFor="type" className="form-label">Descrição</label>
                         <input type="text" className="form-control" id="type" value={description} onChange={(e) => setDescription(e.target.value)} />
+                    </div>
+                    <div className="col-sm-3">
+                        <label htmlFor="type" className="form-label">Descrição</label>
+                        <input type="text" className="form-control" id="type" value={obs} onChange={(e) => setObs(e.target.value)} />
                     </div>
                     <div className="col-sm-3">
                         <label htmlFor="sector" className="form-label">Valor Unitário</label>
@@ -108,6 +114,7 @@ const Produtos: React.FC = () => {
                                         <td>{product.quantity}</td>
                                         <td>{product.unit_price}</td>
                                         <td>{product.registration_date}</td>
+                                        <td>{product.obs}</td>
                                         <td>
                                             <button className="btn btn-primary me-3" onClick={() => navigate(`/product/${product.id}`)}>Editar</button>
                                             <button className="btn btn-danger" onClick={() => handleDeleteProduct(product.id)}>Excluir</button>
