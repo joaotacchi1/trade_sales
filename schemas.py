@@ -6,6 +6,13 @@ class ProductCreate(BaseModel):
     description: str
     unit_price: float
     quantity: int
+    obs: str
+
+class ProductResponse(BaseModel):
+    code: str
+    description: str
+    unit_price: float
+    quantity: int
     registration_date: date
     obs: str
 
