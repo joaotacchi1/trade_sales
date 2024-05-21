@@ -13,7 +13,7 @@ def get_db():
     finally:
         db.close()
 
-@router.get("/cupom/{cupom_id}", response_model=CupomCreate)
+@router.get("/cupom/{cupom_id}", response_model=CupomCreate) #alterar como no sale crud para exibir como queremos
 def get_cupom(cupom_id: int, db: Session = Depends(get_db)):
     cupom = db.query(Cupom).filter(Cupom.id == cupom_id).first()
     if cupom is None:
@@ -28,15 +28,12 @@ def get_all_cupons(db: Session = Depends(get_db)):
     return cupom
 
 @router.post("/cupom/", response_model=CupomCreate)
-def create_cupom(cupom: CupomCreate, sale: SaleCreate, db: Session = Depends(get_db)):
-    create_sale = db.query(Sale).filter(Sale.id_product == sale.id_product).first() #LINHA PARA ARRUMAR
-    if create_sale:
-        db_cupom = Cupom(**cupom.model_dump())
-        db.add(db_cupom)
-        db.commit()
-        db.refresh(db_cupom)
-        return db_cupom
-    raise HTTPException(status_code=404, detail="Sale not found for the created cupom")
+def create_cupom(cupom: CupomCreate, db: Session = Depends(get_db)):
+    db_cupom = Cupom(**cupom.model_dump())
+    db.add(db_cupom)
+    db.commit()
+    db.refresh(db_cupom)
+    return db_cupom
 
 @router.put("/cupom/{cupom_id}", response_model=CupomCreate)
 def update_cupom(cupom_id: int, cupom: CupomCreate, db: Session = Depends(get_db)):
