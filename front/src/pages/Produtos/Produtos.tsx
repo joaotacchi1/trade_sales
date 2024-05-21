@@ -10,7 +10,7 @@ const Produtos: React.FC = () => {
 
     useEffect(() => {
         fetchProducts();
-    }, [produtos]);
+    }, []);
 
     const fetchProducts = async () => {
         try {
@@ -50,6 +50,7 @@ const Produtos: React.FC = () => {
             };
             await api.post('/products/', data);
             console.log(data);
+            fetchProducts();
         } catch (error) {
             console.error(error);
         }
