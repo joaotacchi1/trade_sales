@@ -34,8 +34,8 @@ class Cupom(Base):
     __tablename__ = 'cupom'
 
     id = Column(Integer, primary_key=True, index=True, autoincrement='auto')
-    id_venda = Column(Integer, ForeignKey('sales.id')) #chave estrangeira para id da tabela sales
-    id_produto = Column(Integer, ForeignKey('products.id')) #chave estrangeira para id da tabela products
+    id_sale = Column(Integer, ForeignKey('sales.id')) #chave estrangeira para id da tabela sales
+    id_product = Column(Integer, ForeignKey('products.id')) #chave estrangeira para id da tabela products
     impression_date = Column(Date, default=datetime.now)
 
     sale = relationship('Sale', back_populates='cupom')

@@ -13,7 +13,7 @@ def get_db():
     finally:
         db.close()
 
-@router.get("/cupom/{cupom_id}", response_model=CupomCreate)
+@router.get("/cupom/{cupom_id}", response_model=CupomCreate) #alterar como no sale crud para exibir como queremos
 def get_cupom(cupom_id: int, db: Session = Depends(get_db)):
     cupom = db.query(Cupom).filter(Cupom.id == cupom_id).first()
     if cupom is None:

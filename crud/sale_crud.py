@@ -20,7 +20,7 @@ def create_sale(sale: SaleCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_sale)
 
-    product = db.query(Product).filter(Product.code == sale.product_code).first()
+    product = db.query(Product).filter(Product.id == sale.id_product).first()
     if product:
         product.quantity -= sale.quantity  # Diminuir a quantidade vendida
         db.commit()  # Commit para salvar a atualização na quantidade do produto

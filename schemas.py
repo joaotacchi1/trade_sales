@@ -7,6 +7,7 @@ class ProductCreate(BaseModel):
     unit_price: float
     quantity: int
     registration_date: date
+    obs: str
 
 class SaleCreate(BaseModel):
     id_product: int
@@ -26,7 +27,7 @@ class SaleResponse(BaseModel):
 
 class CupomCreate(BaseModel):
     id_sale: int
-    array: str
+    id_product: int
 
 class UserBase(BaseModel):
     email: str
