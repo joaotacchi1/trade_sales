@@ -10,7 +10,6 @@ class ProductCreate(BaseModel):
 
 class SaleCreate(BaseModel):
     id_product: int
-    product_code: str
     quantity: float
     sale_date: date
 
@@ -22,7 +21,11 @@ class SaleResponse(BaseModel):
     description: str
     unit_price: float
 
+    class Config:
+        orm_mode = True
+
 class CupomCreate(BaseModel):
+    id_sale: int
     array: str
 
 class UserBase(BaseModel):

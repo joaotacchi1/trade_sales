@@ -14,7 +14,7 @@ def get_db():
         db.close()
 
 @router.post("/sales/", response_model=SaleCreate)
-def create_sale(sale: SaleCreate, cupom: CupomCreate, db: Session = Depends(get_db)):
+def create_sale(sale: SaleCreate, db: Session = Depends(get_db)):
     db_sale = Sale(**sale.model_dump())
     db.add(db_sale)
     db.commit()
@@ -27,10 +27,10 @@ def create_sale(sale: SaleCreate, cupom: CupomCreate, db: Session = Depends(get_
 
     return db_sale
 
-@router.get("/sales/{id_product}", response_model=SaleResponse)
+@router.get("/sales/{id_product}", response_model=list[SaleResponse])
 def read_sale(id_product: int, db: Session = Depends(get_db)):
     sale = db.query(Sale).join(Product).add_columns(Sale.id, Sale.id_product, Sale.quantity, Sale.sale_date, Product.code, Product.description, Product.unit_price).\
-    filter(Sale.id_product == id_product).first()
+    filter(Sale.id_product == id_product).all()
     if sale is None:
         raise HTTPException(status_code=404, detail="Sale not found")
     return sale
