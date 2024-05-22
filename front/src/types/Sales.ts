@@ -12,4 +12,5 @@ export type SaleProduct = {
     sale_date: string;
     description: string;
     unit_price: number;
+    validade: string;
 };

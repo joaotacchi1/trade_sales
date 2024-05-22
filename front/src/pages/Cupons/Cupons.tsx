@@ -26,6 +26,19 @@ const Cupons: React.FC = () => {
             console.error(error);
         }
     }
+
+    const handleImprimeCupom = async () => {
+        console.log('imprimir cupom 2x')
+    }
+
+    const handleLimpaCarrinho = async () => {
+        try {
+            await api.delete('/cupom/');
+            fetchCupons();
+        } catch (error) {
+            console.error(error);
+        }
+    }
     return (
         <div className="container">
             <div style={{ height: '600px' }}>
@@ -36,7 +49,9 @@ const Cupons: React.FC = () => {
                                 <th className="col">Descrição</th>
                                 <th className="col">Quantidade</th>
                                 <th className="col">Vl Unit</th>
+                                <th className="col">Vl Total</th>
                                 <th className="col">Data de Impressão</th>
+                                <th className="col">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -45,12 +60,20 @@ const Cupons: React.FC = () => {
                                         <td>{cupom.description}</td>
                                         <td>{cupom.quantity}</td>
                                         <td>{cupom.unit_price}</td>
+                                        <td>{cupom.unit_price * cupom.quantity}</td>
                                         <td>{cupom.impression_date}</td>
+                                        <td><button type="button" className="btn btn-danger" onClick={() => handleDeleteCupom(cupom.id)}>Deletar</button>
+                                        </td>
+                            
                                     </tr>
                                 ))}
                         </tbody>
                     </table>
                 </div>
+            </div>
+            <div>
+                <button type="button" className="btn btn-success" onClick={() => handleImprimeCupom()}>Imprimir Cupom</button>
+                <button type="button" className="btn btn-danger" onClick={() => handleLimpaCarrinho()}>Limpar Carrinho</button>
             </div>
         </div>
     )
