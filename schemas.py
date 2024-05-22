@@ -9,6 +9,7 @@ class ProductCreate(BaseModel):
     obs: str
 
 class ProductResponse(BaseModel):
+    id: int
     code: str
     description: str
     unit_price: float
