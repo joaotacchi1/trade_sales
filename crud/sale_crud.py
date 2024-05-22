@@ -1,7 +1,7 @@
 from fastapi import Depends, HTTPException, APIRouter
 from sqlalchemy.orm import Session
-from models import Sale, Product, Cupom
-from schemas import SaleCreate, SaleResponse, CupomCreate
+from models import Sale, Product
+from schemas import SaleCreate, SaleResponse
 from database import SessionLocal
 
 router = APIRouter()
@@ -59,6 +59,12 @@ def delete_sale(sale_id: int, db: Session = Depends(get_db)):
     db_sale = db.query(Sale).filter(Sale.id == sale_id).first()
     if db_sale is None:
         raise HTTPException(status_code=404, detail="Sale not found")
+    
+    product = db.query(Product).filter(Product.id == db_sale.id_product).first()
+    if product:
+        product.quantity += db_sale.quantity  # Aumentar a quantidade do produto com base na venda
+        db.commit()  # Commit para salvar a atualização na quantidade do produto
+
     db.delete(db_sale)
     db.commit()
     return {"message": "Sale deleted successfully"}
