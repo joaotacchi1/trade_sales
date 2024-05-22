@@ -35,6 +35,14 @@ def read_sale(id_product: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Sale not found")
     return sale
 
+@router.get("/getsales/{sale_id}", response_model = SaleResponse)
+def read_sale_by_id(sale_id: int, db: Session = Depends(get_db)):
+    sale = db.query(Sale).join(Product).add_columns(Sale.id, Sale.id_product, Sale.quantity, Sale.sale_date, Product.code, Product.description, Product.unit_price).\
+    filter(Sale.id == sale_id).first()
+    if sale is None:
+        raise HTTPException(status_code=404, detail="Sale not found")
+    return sale
+
 @router.get("/sales/", response_model=list[SaleResponse])
 def real_all_sales(db: Session = Depends(get_db)):
     sales = db.query(Sale).join(Product).add_columns(Sale.id, Sale.id_product, Sale.quantity, Sale.sale_date, Product.code, Product.description, Product.unit_price).\
