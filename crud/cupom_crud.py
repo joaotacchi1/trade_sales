@@ -1,4 +1,5 @@
 from fastapi import Depends, HTTPException, APIRouter
+from sqlalchemy import delete
 from sqlalchemy.orm import Session
 from models import Cupom, Product
 from schemas import CupomCreate, CupomResponse
@@ -55,3 +56,9 @@ def delete_cupom(cupom_id: int, db: Session = Depends(get_db)):
         db.delete(db_cupom)
         db.commit()
     return db_cupom
+
+@router.delete('/cupom/')
+def delete_all_cupons(db: Session = Depends(get_db)):
+    db.execute(delete(Cupom))
+    db.commit
+    return {'message': 'All cupons deleted successfully'}
