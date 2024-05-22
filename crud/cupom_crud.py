@@ -1,7 +1,7 @@
 from fastapi import Depends, HTTPException, APIRouter
 from sqlalchemy import delete
 from sqlalchemy.orm import Session
-from models import Cupom, Product
+from models import Cupom, Product, Sale
 from schemas import CupomCreate, CupomResponse
 from database import SessionLocal
 
@@ -24,7 +24,7 @@ def get_cupom(cupom_id: int, db: Session = Depends(get_db)):
 
 @router.get("/cupom/", response_model=list[CupomResponse])
 def get_all_cupons(db: Session = Depends(get_db)):
-    cupom = db.query(Cupom).join(Product).add_columns(Cupom.id, Product.description, Product.quantity, Product.unit_price, Cupom.impression_date).\
+    cupom = db.query(Cupom).join(Sale).add_columns(Cupom.id, Product.description, Sale.quantity, Product.unit_price, Cupom.impression_date).\
     all()
     if cupom is None:
         raise HTTPException(status_code=404, detail="Cupom not found")
