@@ -1,7 +1,7 @@
 from fastapi import Depends, HTTPException, APIRouter
 from sqlalchemy.orm import Session
-from models import Cupom, Sale
-from schemas import CupomCreate, SaleCreate
+from models import Cupom, Product
+from schemas import CupomCreate, CupomResponse
 from database import SessionLocal
 
 router = APIRouter()
@@ -13,9 +13,10 @@ def get_db():
     finally:
         db.close()
 
-@router.get("/cupom/{cupom_id}", response_model=CupomCreate) #alterar como no sale crud para exibir como queremos
+@router.get("/cupom/{cupom_id}", response_model=list[CupomResponse])
 def get_cupom(cupom_id: int, db: Session = Depends(get_db)):
-    cupom = db.query(Cupom).filter(Cupom.id == cupom_id).first()
+    cupom = db.query(Cupom).join(Product).add_columns(Product.description, Product.quantity, Product.unit_price, Cupom.impression_date).\
+        filter(Cupom.id == cupom_id).all()
     if cupom is None:
         raise HTTPException(status_code=404, detail="Cupom not found")
     return cupom

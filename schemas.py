@@ -5,14 +5,14 @@ class ProductCreate(BaseModel):
     code: str
     description: str
     unit_price: float
-    quantity: int
+    quantity: float
     obs: str
 
 class ProductResponse(BaseModel):
     code: str
     description: str
     unit_price: float
-    quantity: int
+    quantity: float
     registration_date: date
     obs: str
 
@@ -35,6 +35,12 @@ class SaleResponse(BaseModel):
 class CupomCreate(BaseModel):
     id_sale: int
     id_product: int
+
+class CupomResponse(BaseModel):
+    quantity: float
+    description: str
+    unit_price: float
+    impression_date: date
 
 class UserBase(BaseModel):
     email: str
