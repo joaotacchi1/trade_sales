@@ -23,6 +23,7 @@ class SaleCreate(BaseModel):
     sale_date: date
 
 class SaleResponse(BaseModel):
+    id: int
     id_product: int
     code: str
     quantity: float
@@ -38,6 +39,7 @@ class CupomCreate(BaseModel):
     id_product: int
 
 class CupomResponse(BaseModel):
+    id: int
     quantity: float
     description: str
     unit_price: float
