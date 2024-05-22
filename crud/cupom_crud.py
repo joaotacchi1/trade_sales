@@ -61,6 +61,7 @@ def delete_cupom(cupom_id: int, db: Session = Depends(get_db)):
 
 @router.delete('/cupom/')
 def delete_all_cupons(db: Session = Depends(get_db)):
-    db.execute(delete(Cupom))
-    db.commit
+    db.query(Cupom).delete()
+    #db.execute(delete(Cupom))
+    db.commit()
     return {'message': 'All cupons deleted successfully'}

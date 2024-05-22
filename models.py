@@ -7,7 +7,7 @@ class Product(Base):
     __tablename__ = "products"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement='auto')
-    code = Column(String, index=True)
+    code = Column(Integer, index=True)
     description = Column(String)
     unit_price = Column(Float)
     quantity = Column(Float)
@@ -22,7 +22,7 @@ class Sale(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement='auto')
     id_product = Column(Integer, ForeignKey('products.id')) #chave estrangeira para id da tabela product
-    product_code = Column(String, index=True)
+    product_code = Column(Integer, index=True)
     unit_price = Column(Float) #tirar, talvez?
     quantity = Column(Float)
     sale_date = Column(Date, default=datetime.now)

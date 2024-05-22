@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from datetime import date
 
 class ProductCreate(BaseModel):
-    code: str
+    code: int
     description: str
     unit_price: float
     quantity: float
@@ -10,7 +10,7 @@ class ProductCreate(BaseModel):
 
 class ProductResponse(BaseModel):
     id: int
-    code: str
+    code: int
     description: str
     unit_price: float
     quantity: float
@@ -24,7 +24,7 @@ class SaleCreate(BaseModel):
 class SaleResponse(BaseModel):
     id: int
     id_product: int
-    code: str
+    code: int
     quantity: float
     sale_date: date
     description: str
