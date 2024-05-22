@@ -36,7 +36,7 @@ const Produtos: React.FC = () => {
 
     const [code, setCode] = useState('');
     const [description, setDescription] = useState('');
-    const [unit_price, setUnit_price] = useState(0);
+    const [unit_price, setUnit_price] = useState(0.0);
     const [quantity, setQuantity] = useState(0);
     const [sale_quantity, setSale_quantity] = useState(0);
     const [obs, setObs] = useState('');
@@ -95,7 +95,7 @@ const Produtos: React.FC = () => {
                     </div>
                     <div className="col-sm-2">
                         <label htmlFor="sector" className="form-label">Valor Unitário</label>
-                        <input type="text" className="form-control" id="sector" value={unit_price} onChange={(e) => setUnit_price(parseInt(e.target.value))} />
+                        <input type="number" className="form-control" id="sector" value={unit_price} onChange={(e) => setUnit_price(parseInt(e.target.value))} />
                     </div>
                     <div className="col-sm-3">
                         <label htmlFor="type" className="form-label">Observação</label>

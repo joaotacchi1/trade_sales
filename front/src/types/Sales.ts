@@ -7,7 +7,7 @@ export type Sale = {
 export type SaleProduct = {
     id: number;
     id_product: number;
-    code: string;
+    code: number;
     quantity: number;
     sale_date: string;
     description: string;
