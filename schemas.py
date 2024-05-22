@@ -20,7 +20,6 @@ class ProductResponse(BaseModel):
 class SaleCreate(BaseModel):
     id_product: int
     quantity: float
-    sale_date: date
 
 class SaleResponse(BaseModel):
     id: int
