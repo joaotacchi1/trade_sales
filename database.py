@@ -5,9 +5,8 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
-env = os.getenv('DB_PASSWORD')
 
-DATABASE_URL = "postgresql://postgres:{env}}@localhost:5432/troca"
+DATABASE_URL = os.getenv('DATABASE_URL')
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
