@@ -34,6 +34,9 @@ class SaleResponse(BaseModel):
     class Config:
         orm_mode = True
 
+class SaleUpdate(BaseModel):
+    validate: str
+
 class CupomCreate(BaseModel):
     id_sale: int
     id_product: int

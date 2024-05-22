@@ -1,7 +1,7 @@
 from fastapi import Depends, HTTPException, APIRouter
 from sqlalchemy.orm import Session
 from models import Sale, Product
-from schemas import SaleCreate, SaleResponse
+from schemas import SaleCreate, SaleResponse, SaleUpdate
 from database import SessionLocal
 
 router = APIRouter()
@@ -51,8 +51,8 @@ def real_all_sales(db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Sales not found")
     return sales
 
-@router.put("/sales/{sale_id}", response_model=SaleCreate)
-def update_sale(sale_id: int, sale: SaleCreate, db: Session = Depends(get_db)):
+@router.put("/sales/{sale_id}", response_model=SaleUpdate)
+def update_sale(sale_id: int, sale: SaleUpdate, db: Session = Depends(get_db)):
     db_sale = db.query(Sale).filter(Sale.id == sale_id).first()
     if db_sale is None:
         raise HTTPException(status_code=404, detail="Sale not found")
