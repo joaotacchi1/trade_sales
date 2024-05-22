@@ -16,7 +16,8 @@ def get_db():
 
 @router.get("/cupom/{cupom_id}", response_model=list[CupomResponse])
 def get_cupom(cupom_id: int, db: Session = Depends(get_db)):
-    cupom = db.query(Cupom).join(Product).add_columns(Cupom.id, Product.description, Product.quantity, Product.unit_price, Cupom.impression_date).\
+    cupom = db.query(Cupom).join(Sale, Cupom.id_sale==Sale.id).join(Product, Cupom.id_product == Product.id).\
+    add_columns(Cupom.id, Product.description, Sale.quantity, Product.unit_price, Cupom.impression_date).\
     filter(Cupom.id == cupom_id).all()
     if cupom is None:
         raise HTTPException(status_code=404, detail="Cupom not found")
