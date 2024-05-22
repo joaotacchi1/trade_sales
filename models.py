@@ -26,6 +26,7 @@ class Sale(Base):
     unit_price = Column(Float) #tirar, talvez?
     quantity = Column(Float)
     sale_date = Column(Date, default=datetime.now)
+    validate = Column(String)
 
     product = relationship("Product", back_populates="sales")
     cupom = relationship('Cupom', back_populates='sale')

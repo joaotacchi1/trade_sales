@@ -29,6 +29,7 @@ class SaleResponse(BaseModel):
     sale_date: date
     description: str
     unit_price: float
+    validate: str
 
     class Config:
         orm_mode = True
