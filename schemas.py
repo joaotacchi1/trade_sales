@@ -1,11 +1,11 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import date
 
 class ProductCreate(BaseModel):
     code: int
     description: str
-    unit_price: float
-    quantity: float
+    unit_price: float = Field(..., gt=0, description='Price must be zero or greater')
+    quantity: float = Field(..., gt=0, description='Quantity must be zero or greater')
     obs: str
 
 class ProductResponse(BaseModel):
@@ -19,7 +19,7 @@ class ProductResponse(BaseModel):
 
 class SaleCreate(BaseModel):
     id_product: int
-    quantity: float
+    quantity: float = Field(..., gt=0, description='Quantity must be zero or greater')
 
 class SaleResponse(BaseModel):
     id: int

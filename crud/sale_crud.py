@@ -21,7 +21,9 @@ def create_sale(sale: SaleCreate, db: Session = Depends(get_db)):
     db.refresh(db_sale)
 
     product = db.query(Product).filter(Product.id == sale.id_product).first()
-    if product:
+    if sale.quantity > product.quantity:
+        raise HTTPException(status_code=400, detail="Insufficient product quantity in stock")
+    else:
         product.quantity -= sale.quantity  # Diminuir a quantidade vendida
         db.commit()  # Commit para salvar a atualização na quantidade do produto
 

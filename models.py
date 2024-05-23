@@ -23,13 +23,13 @@ class Sale(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement='auto')
     id_product = Column(Integer, ForeignKey('products.id')) #chave estrangeira para id da tabela product
     product_code = Column(Integer, index=True)
-    unit_price = Column(Float) #tirar, talvez?
+    #unit_price = Column(Float) #tirar, talvez?
     quantity = Column(Float)
     sale_date = Column(Date, default=datetime.now)
     validate = Column(String, default='null')
 
     product = relationship("Product", back_populates="sales")
-    cupom = relationship('Cupom', back_populates='sale')
+    cupom = relationship('Cupom', back_populates='sale', cascade='save-update, merge')
 
 class Cupom(Base):
     __tablename__ = 'cupom'
