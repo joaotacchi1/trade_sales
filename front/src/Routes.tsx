@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar";
 import Produtos from "./pages/Produtos/Produtos";
 import Vendas from "./pages/Vendas/Vendas";
 import Cupons from "./pages/Cupons/Cupons";
+import VendeProdutos from "./pages/Produtos/VendeProdutos";
 
 const AdminRoutes = () => {
     const { authenticated, user } = useAuth();
@@ -22,7 +23,8 @@ const AppRoutes = () => {
                     <Route path="/" element={<Navigate to="/login" />} />
                     <Route path="/login" element={<><Login /></>} />
                     <Route element={<AdminRoutes />}>
-                        <Route path="/produtos" element={<><Navbar /><Produtos /></>} />
+                        <Route path="/cadastro" element={<><Navbar /><Produtos /></>} />
+                        <Route path="/produtos" element={<><Navbar /><VendeProdutos/></>} />
                         <Route path="/vendas" element={<><Navbar /><Vendas /></>} />
                         <Route path="/cupons" element={<><Navbar /><Cupons /></>} />
                     </Route>

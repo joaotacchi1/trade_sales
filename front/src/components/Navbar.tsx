@@ -20,6 +20,7 @@ const Navbar = () => {
                 <span></span>
             </div>
             <ul className={`navbar-list ${isMobileMenuOpen ? 'open' : ''}`}>
+                <li><Link to="/cadastro" onClick={toggleMobileMenu}>Cadastro</Link></li>
                 <li><Link to="/produtos" onClick={toggleMobileMenu}>Produtos</Link></li>
                 <li><Link to="/vendas" onClick={toggleMobileMenu}>Vendas</Link></li>
                 <li><Link to="/cupons" onClick={toggleMobileMenu}>Cupons</Link></li>

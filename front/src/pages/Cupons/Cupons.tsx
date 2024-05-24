@@ -4,10 +4,15 @@ import api from "../../services/useApi";
 
 const Cupons: React.FC = () => {
     const [cupons , setCupons] = useState<Cupom[]>([]);
+    const [valorTotal, setValorTotal] = useState(0);
 
     useEffect(() => {
         fetchCupons();
     }, []);
+
+    useEffect(() => {
+        calculaValorTotal();
+    }, [cupons]);
 
     const fetchCupons = async () => {
         try {
@@ -16,6 +21,14 @@ const Cupons: React.FC = () => {
         } catch (error) {
             console.error(error);
         }
+    }
+
+    const calculaValorTotal = () => {
+        let total = 0;
+        cupons.map((cupom: Cupom) => {
+            total += cupom.unit_price * cupom.quantity;
+        });
+        setValorTotal(total);
     }
 
     const handleDeleteCupom = async (id: number) => {
@@ -35,6 +48,7 @@ const Cupons: React.FC = () => {
         try {
             await api.delete('/cupom/');
             fetchCupons();
+            calculaValorTotal();
         } catch (error) {
             console.error(error);
         }
@@ -59,8 +73,8 @@ const Cupons: React.FC = () => {
                                     <tr key={cupom.id} className="align-middle">
                                         <td>{cupom.description}</td>
                                         <td>{cupom.quantity}</td>
-                                        <td>{cupom.unit_price}</td>
-                                        <td>{cupom.unit_price * cupom.quantity}</td>
+                                        <td>R$ {cupom.unit_price}</td>
+                                        <td>R$ {(cupom.unit_price * cupom.quantity).toFixed(2)}</td>
                                         <td>{cupom.impression_date}</td>
                                         <td><button type="button" className="btn btn-danger" onClick={() => handleDeleteCupom(cupom.id)}>Deletar</button>
                                         </td>
@@ -74,6 +88,9 @@ const Cupons: React.FC = () => {
             <div>
                 <button type="button" className="btn btn-success" onClick={() => handleImprimeCupom()}>Imprimir Cupom</button>
                 <button type="button" className="btn btn-danger" onClick={() => handleLimpaCarrinho()}>Limpar Carrinho</button>
+            </div>
+            <div>
+                <h3>Valor Total: R$ {valorTotal.toFixed(2)}</h3>
             </div>
         </div>
     )

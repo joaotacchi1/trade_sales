@@ -59,25 +59,38 @@ const Produtos: React.FC = () => {
         }
     };
 
-    const handleSaleQuantityChange = (id: number, value: number) => {
-        setSaleQuantities((prevQuantities) => ({
-            ...prevQuantities,
-            [id]: value,
-        }));
+    const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
+    const handleEditProduct = (product: Product) => {
+        setCurrentProduct(product);
+        setCode(product.code.toString()); // Convert product.code to a string
+        setDescription(product.description);
+        setUnit_price(product.unit_price);
+        setQuantity(product.quantity);
+        setObs(product.obs);
     };
 
-    const handleSellProduct = async (id: number) => {
-        console.log(id);
+    const clearProduct = () => {
+        setCurrentProduct(null);
+        setCode('');
+        setDescription('');
+        setUnit_price(0.0);
+        setQuantity(0);
+        setObs('');
+    }
+
+    const handleUpdateProduct = async () => {
+        if (!currentProduct) return;
         try {
-            const res = await api.get(`/products/${id}`);
-            const product = res.data;
-            const data = {
-                id_product: product.id,
-                quantity: saleQuantities[id] || 0, // Use the specific sale_quantity for this product
+            const updatedProduct = {
+                code,
+                description,
+                unit_price,
+                quantity,
+                obs
             };
-            console.log(data);
-            await api.post('/sales/', data);
+            await api.put(`/products/${currentProduct.id}`, updatedProduct);
             fetchProducts();
+            clearProduct();
         } catch (error) {
             console.error(error);
         }
@@ -85,31 +98,65 @@ const Produtos: React.FC = () => {
 
     return (
         <div className="container">
-            <div className="container">
-                <div className="row g-3 mt-3 border rounded p-4">
-                    <h1 className="text-center m-0">Cadastrar Item</h1>
-                    <div className="col-sm-3">
-                        <label htmlFor="name" className="form-label">Codigo</label>
-                        <input type="text" className="form-control" id="name" value={code} onChange={(e) => setCode(e.target.value)} />
-                    </div>
-                    <div className="col-sm-3">
-                        <label htmlFor="type" className="form-label">Descrição</label>
-                        <input type="text" className="form-control" id="type" value={description} onChange={(e) => setDescription(e.target.value)} />
-                    </div>
-                    <div className="col-sm-1">
-                        <label htmlFor="quantity" className="form-label">Quantidade</label>
-                        <input type="number" className="form-control" id="quantity" value={quantity} onChange={(e) => setQuantity(parseFloat(e.target.value))} />
-                    </div>
-                    <div className="col-sm-2">
-                        <label htmlFor="sector" className="form-label">Valor Unitário</label>
-                        <input type="number" className="form-control" id="sector" value={unit_price} onChange={(e) => setUnit_price(parseFloat(e.target.value))} />
-                    </div>
-                    <div className="col-sm-3">
-                        <label htmlFor="type" className="form-label">Observação</label>
-                        <input type="text" className="form-control" id="type" value={obs} onChange={(e) => setObs(e.target.value)} />
-                    </div>
-                    <div className="col-sm-1 align-self-end">
-                        <button type="button" className="btn btn-primary" onClick={handleCreateProduct}>Cadastrar</button>
+            <div className="row g-3 mt-3 border rounded p-4">
+                <h1 className="text-center m-0">Cadastrar Item</h1>
+                <div className="col-sm-3">
+                    <label htmlFor="name" className="form-label">Codigo</label>
+                    <input type="text" className="form-control" id="name" value={code} onChange={(e) => setCode(e.target.value)} />
+                </div>
+                <div className="col-sm-3">
+                    <label htmlFor="type" className="form-label">Descrição</label>
+                    <input type="text" className="form-control" id="type" value={description} onChange={(e) => setDescription(e.target.value.toUpperCase())} />
+                </div>
+                <div className="col-sm-1">
+                    <label htmlFor="quantity" className="form-label">Quantidade</label>
+                    <input type="number" className="form-control" id="quantity" value={quantity} onChange={(e) => setQuantity(parseFloat(e.target.value))} />
+                </div>
+                <div className="col-sm-2">
+                    <label htmlFor="sector" className="form-label">Valor Unitário</label>
+                    <input type="number" className="form-control" id="sector" value={unit_price} onChange={(e) => setUnit_price(parseFloat(e.target.value))} />
+                </div>
+                <div className="col-sm-3">
+                    <label htmlFor="type" className="form-label">Observação</label>
+                    <input type="text" className="form-control" id="type" value={obs} onChange={(e) => setObs(e.target.value.toUpperCase())} />
+                </div>
+                <div className="col-sm-1 align-self-end">
+                    <button type="button" className="btn btn-primary" onClick={handleCreateProduct}>Cadastrar</button>
+                </div>
+            </div>
+            <div className="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div className="modal-dialog modal-dialog-centered">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h1 className="modal-title fs-5" id="staticBackdropLabel">Atualizar Armário</h1>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body">
+                            <div className="col">
+                                <label htmlFor="editCode" className="form-label">Codigo</label>
+                                <input type="text" className="form-control" id="editCode" value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} />
+                            </div>
+                            <div className="col">
+                                <label htmlFor="editDescription" className="form-label">Descrição</label>
+                                <input type="text" className="form-control" id="editDescription" value={description} onChange={(e) => setDescription(e.target.value.toUpperCase())} />
+                            </div>
+                            <div className="col">
+                                <label htmlFor="editQuantity" className="form-label">Quantidade</label>
+                                <input type="number" className="form-control" id="editQuantity" value={quantity} onChange={(e) => setQuantity(parseFloat(e.target.value))} />
+                            </div>
+                            <div className="col">
+                                <label htmlFor="editUnitPrice" className="form-label">Valor Unitário</label>
+                                <input type="number" className="form-control" id="editUnitPrice" value={unit_price} onChange={(e) => setUnit_price(parseFloat(e.target.value))} />
+                            </div>
+                            <div className="col">
+                                <label htmlFor="editObs" className="form-label">Observação</label>
+                                <input type="text" className="form-control" id="editObs" value={obs} onChange={(e) => setObs(e.target.value.toUpperCase())} />
+                            </div>
+
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-primary" onClick={handleUpdateProduct} data-bs-dismiss="modal">Atualizar</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -137,20 +184,12 @@ const Produtos: React.FC = () => {
                                         <td>{product.code}</td>
                                         <td>{product.description}</td>
                                         <td>{product.quantity}</td>
-                                        <td>{product.unit_price}</td>
+                                        <td>R$ {product.unit_price}</td>
                                         <td>{product.obs}</td>
                                         <td>{product.registration_date}</td>
                                         <td>
-                                            <button className="btn btn-primary me-3" onClick={() => navigate(`/product/${product.id}`)}>Editar</button>
+                                            <button className="btn btn-primary me-3" data-bs-toggle="modal" data-bs-target="#staticBackdrop" onClick={() => handleEditProduct(product)}>Editar</button>
                                             <button className="btn btn-danger me-3" onClick={() => handleDeleteProduct(product.id)}>Excluir</button>
-                                            <button className="btn btn-success" onClick={() => handleSellProduct(product.id)}>Vender</button>
-                                            <input
-                                                type="number"
-                                                className="form-control"
-                                                id={`quantity-${product.id}`}
-                                                value={saleQuantities[product.id] || 0}
-                                                onChange={(e) => handleSaleQuantityChange(product.id, parseFloat(e.target.value))}
-                                            />
                                         </td>
                                     </tr>
                                 ))}
