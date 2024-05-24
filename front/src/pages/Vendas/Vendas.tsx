@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
-import { Sale, SaleProduct } from "../../types/Sales";
+import { SaleProduct } from "../../types/Sales";
 import api from "../../services/useApi";
-import { useNavigate } from "react-router-dom";
 
 const Vendas: React.FC = () => {
     const [sales, setSale] = useState<SaleProduct[]>([]);
-    const [filtroName, setFiltroName] = useState('');
-    const navigate = useNavigate();
+    const [filtroName] = useState('');
 
     useEffect(() => {
         fetchSales();
@@ -58,7 +56,7 @@ const Vendas: React.FC = () => {
     return (
         <div className="container">
             <div style={{ height: '600px' }}>
-                <div className="h-100 overflow-y-auto border ">
+                <div className="h-100 overflow-y-auto border mt-3 ">
                     <table className="table table-striped table-bordered table-hover m-0">
                         <thead>
                             <tr>
@@ -66,8 +64,8 @@ const Vendas: React.FC = () => {
                                 <th className="col">Descrição</th>
                                 <th className="col">Quantidade</th>
                                 <th className="col">Vl Unit</th>
+                                <th className="col">Vl Total</th>
                                 <th className="col">Data da venda</th>
-                                <th className="col">Validate</th>
                                 <th className="col">Ações</th>
                             </tr>
                         </thead>
@@ -75,19 +73,21 @@ const Vendas: React.FC = () => {
                             {/*Filter by name, type and sector*/}
                             {sales.filter((sales: SaleProduct) => sales.description.toUpperCase().includes(filtroName.toUpperCase()))
                                 .map((sales: SaleProduct) => (
+                                    sales.validate !== "VENDIDO" ? (
                                     <tr key={sales.id} className="align-middle">
                                         <td>{sales.code}</td>
                                         <td>{sales.description}</td>
                                         <td>{sales.quantity}</td>
                                         <td>R$ {sales.unit_price}</td>
+                                        <td>R$ {(sales.quantity * sales.unit_price).toFixed(2)}</td>
                                         <td>{sales.sale_date}</td>
-                                        <td>{sales.validate}</td>
                                         <td>
                                             <button className="btn btn-danger me-3" onClick={() => handleDeleteSale(sales.id)}>Excluir</button>
                                             <button className="btn btn-success" onClick={() => handleAdicionaCarrinho(sales.id)}>Carrinho</button>
                                         </td>
                                     </tr>
-                                ))}
+                                    ) : null)
+                                )}
                         </tbody>
                     </table>
                 </div>

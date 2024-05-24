@@ -1,12 +1,10 @@
 import { FormEvent, useEffect, useState } from "react";
 import { Product } from "../../types/Product";
 import api from "../../services/useApi";
-import { useNavigate } from "react-router-dom";
 
 const Produtos: React.FC = () => {
     const [produtos, setProdutos] = useState<Product[]>([]);
     const [filtroName, setFiltroName] = useState('');
-    const navigate = useNavigate();
 
     useEffect(() => {
         fetchProducts();
@@ -39,7 +37,6 @@ const Produtos: React.FC = () => {
     const [unit_price, setUnit_price] = useState(0.0);
     const [quantity, setQuantity] = useState(0);
     const [obs, setObs] = useState('');
-    const [saleQuantities, setSaleQuantities] = useState<{ [key: number]: number }>({});
 
     const handleCreateProduct = async (e: FormEvent) => {
         e.preventDefault();
@@ -98,9 +95,9 @@ const Produtos: React.FC = () => {
 
     return (
         <div className="container">
-            <div className="row g-3 mt-3 border rounded p-4">
+            <div className="row g-3 mt-3 border rounded p-4 m-0">
                 <h1 className="text-center m-0">Cadastrar Item</h1>
-                <div className="col-sm-3">
+                <div className="col-sm-2">
                     <label htmlFor="name" className="form-label">Codigo</label>
                     <input type="text" className="form-control" id="name" value={code} onChange={(e) => setCode(e.target.value)} />
                 </div>
@@ -128,7 +125,7 @@ const Produtos: React.FC = () => {
                 <div className="modal-dialog modal-dialog-centered">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h1 className="modal-title fs-5" id="staticBackdropLabel">Atualizar Armário</h1>
+                            <h1 className="modal-title fs-5" id="staticBackdropLabel">Atualizar Produto</h1>
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div className="modal-body">
@@ -161,7 +158,7 @@ const Produtos: React.FC = () => {
                 </div>
             </div>
             <div>
-                <input type="text" className="form-control col" placeholder="Filtrar por nome" onChange={handleFilterNameChange} />
+                <input type="text" className="form-control col my-3" placeholder="Filtrar por nome" onChange={handleFilterNameChange} />
             </div>
             <div style={{ height: '600px' }}>
                 <div className="h-100 overflow-y-auto border">

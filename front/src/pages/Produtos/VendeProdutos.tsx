@@ -48,8 +48,14 @@ const VendeProdutos = () => {
             console.error(error);
         }
     };
+    const handleFilterNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setFiltroName(event.target.value);
+    };
     return (
         <div className="container">
+            <div className="my-3">
+                <input type="text" className="form-control col" placeholder="Filtrar por nome" onChange={handleFilterNameChange} />
+            </div>
             <div style={{ height: '600px' }}>
                 <div className="h-100 overflow-y-auto border">
                     <table className="table table-striped table-bordered table-hover m-0">
@@ -74,15 +80,17 @@ const VendeProdutos = () => {
                                         <td>R$ {product.unit_price}</td>
                                         <td>{product.obs}</td>
                                         <td>{product.registration_date}</td>
-                                        <td>
-                                            <button className="btn btn-success" onClick={() => handleSellProduct(product.id)}>Vender</button>
-                                            <input
+                                        <td className="d-flex">
+                                        <input
                                                 type="number"
-                                                className="form-control"
+                                                className="form-control me-3"
+                                                style={{ width: '100px' }}
                                                 id={`quantity-${product.id}`}
                                                 value={saleQuantities[product.id] || 0}
                                                 onChange={(e) => handleSaleQuantityChange(product.id, parseFloat(e.target.value))}
                                             />
+                                            <button className="btn btn-success" onClick={() => handleSellProduct(product.id)}>Vender</button>
+                                            
                                         </td>
                                     </tr>
                                 ))}

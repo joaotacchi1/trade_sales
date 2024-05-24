@@ -3,7 +3,7 @@ import { Cupom } from "../../types/cupom";
 import api from "../../services/useApi";
 
 const Cupons: React.FC = () => {
-    const [cupons , setCupons] = useState<Cupom[]>([]);
+    const [cupons, setCupons] = useState<Cupom[]>([]);
     const [valorTotal, setValorTotal] = useState(0);
 
     useEffect(() => {
@@ -33,6 +33,14 @@ const Cupons: React.FC = () => {
 
     const handleDeleteCupom = async (id: number) => {
         try {
+            const vendeu = {
+                validate: "null"
+            }
+            cupons.map((cupom: Cupom) => {
+                if (cupom.id === id) {
+                    api.put(`/sales/${cupom.id_sale}`, vendeu);
+                }
+            });
             await api.delete(`/cupom/${id}`);
             fetchCupons();
         } catch (error) {
@@ -56,7 +64,7 @@ const Cupons: React.FC = () => {
     return (
         <div className="container">
             <div style={{ height: '600px' }}>
-                <div className="h-100 overflow-y-auto border ">
+                <div className="h-100 overflow-y-auto border mt-3">
                     <table className="table table-striped table-bordered table-hover m-0">
                         <thead>
                             <tr>
@@ -70,27 +78,27 @@ const Cupons: React.FC = () => {
                         </thead>
                         <tbody>
                             {cupons.map((cupom: Cupom) => (
-                                    <tr key={cupom.id} className="align-middle">
-                                        <td>{cupom.description}</td>
-                                        <td>{cupom.quantity}</td>
-                                        <td>R$ {cupom.unit_price}</td>
-                                        <td>R$ {(cupom.unit_price * cupom.quantity).toFixed(2)}</td>
-                                        <td>{cupom.impression_date}</td>
-                                        <td><button type="button" className="btn btn-danger" onClick={() => handleDeleteCupom(cupom.id)}>Deletar</button>
-                                        </td>
-                            
-                                    </tr>
-                                ))}
+                                <tr key={cupom.id} className="align-middle">
+                                    <td>{cupom.description}</td>
+                                    <td>{cupom.quantity}</td>
+                                    <td>R$ {cupom.unit_price}</td>
+                                    <td>R$ {(cupom.unit_price * cupom.quantity).toFixed(2)}</td>
+                                    <td>{cupom.impression_date}</td>
+                                    <td><button type="button" className="btn btn-danger" onClick={() => handleDeleteCupom(cupom.id)}>Deletar</button>
+                                    </td>
+                                </tr>
+
+                            ))}
                         </tbody>
                     </table>
                 </div>
             </div>
-            <div>
-                <button type="button" className="btn btn-success" onClick={() => handleImprimeCupom()}>Imprimir Cupom</button>
+            <div className="text-center">
+                <button type="button" className="btn btn-success m-3" onClick={() => handleImprimeCupom()}>Imprimir Cupom</button>
                 <button type="button" className="btn btn-danger" onClick={() => handleLimpaCarrinho()}>Limpar Carrinho</button>
             </div>
             <div>
-                <h3>Valor Total: R$ {valorTotal.toFixed(2)}</h3>
+                <h3 className="text-center">Valor Total: R$ {valorTotal.toFixed(2)}</h3>
             </div>
         </div>
     )
