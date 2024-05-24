@@ -43,6 +43,8 @@ class CupomCreate(BaseModel):
 
 class CupomResponse(BaseModel):
     id: int
+    id_sale: int
+    id_product: int
     quantity: float
     description: str
     unit_price: float
