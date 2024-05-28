@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { SaleProduct } from "../../types/Sales";
 import api from "../../services/useApi";
+import Papa from 'papaparse';
 
 const Vendas: React.FC = () => {
     const [sales, setSale] = useState<SaleProduct[]>([]);
@@ -53,6 +54,28 @@ const Vendas: React.FC = () => {
         }
     }
 
+    const handleExportVendas = async () => {
+        const csvdata = sales.map(({ code, description, quantity, unit_price, sale_date }) => ({
+            CODIGO: code,
+            DESCRICAO: description,
+            QUANTIDADE: quantity.toString().replace('.', ','),
+            VALOR_UNITARIO: unit_price.toString().replace('.', ','),
+            VALOR_TOTAL: (quantity * unit_price).toFixed(2).replace('.', ','),
+            DATA_VENDA: sale_date
+        }));
+        
+        const csv = Papa.unparse(csvdata, { delimiter: ";" });
+
+        const csvBlob = new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8;' });
+
+		const csvURL = window.URL.createObjectURL(csvBlob);
+		const tempLink = document.createElement('a');
+		tempLink.href = csvURL;
+		tempLink.setAttribute('download', 'relatorio.csv');
+		document.body.appendChild(tempLink);
+		tempLink.click();
+		document.body.removeChild(tempLink);
+    }
     return (
         <div className="container">
             <div style={{ height: '600px' }}>
@@ -91,6 +114,9 @@ const Vendas: React.FC = () => {
                         </tbody>
                     </table>
                 </div>
+            </div>
+            <div className="d-flex justify-content-center my-3">
+                <button className="btn btn-primary" onClick={handleExportVendas}>Exportar</button>
             </div>
         </div>
     )
