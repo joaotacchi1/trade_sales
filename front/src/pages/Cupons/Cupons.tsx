@@ -76,18 +76,18 @@ const Cupons: React.FC = () => {
         let printWindow = window.open('', '_blank');
 
         if (printWindow) {
-            printWindow.document.write('<html><head><title>Produtos</title></head><body>');
+            printWindow.document.write('<body>');
             printWindow.document.write(htmlContent);
             printWindow.document.write('</body></html>');
-            printWindow.document.close();
-        }
-
-        // Espera a nova janela carregar e então chama a função de impressão
-        if (printWindow)
             printWindow.onload = function () {
                 printWindow.print();
                 printWindow.close();
             };
+            printWindow.document.close();
+        }
+
+        // Espera a nova janela carregar e então chama a função de impressão
+
     };
 
 
