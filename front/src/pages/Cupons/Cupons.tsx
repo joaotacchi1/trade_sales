@@ -48,10 +48,6 @@ const Cupons: React.FC = () => {
         }
     }
 
-    const handleImprimeCupom = async () => {
-        console.log('imprimir cupom 2x')
-    }
-
     const handleLimpaCarrinho = async () => {
         try {
             await api.delete('/cupom/');
@@ -61,6 +57,40 @@ const Cupons: React.FC = () => {
             console.error(error);
         }
     }
+
+    const handleImprimeCupom = async () => {
+        // Cria a estrutura HTML com os dados
+        let htmlContent = '<div>';
+
+        cupons.forEach((cupom, index) => {
+            htmlContent += `
+                <p>${cupom.description}</p>
+                <div style="display:flex; gap: 55px">
+                    <p style="height:fit-content">${cupom.quantity.toString().replace('.', ',')}</p>
+                    <p style="height:fit-content">${cupom.unit_price.toString().replace('.', ',')}</p>
+                </div>
+                <p>----------------------</p>
+            `;
+        });
+
+        let printWindow = window.open('', '_blank');
+
+        if (printWindow) {
+            printWindow.document.write('<html><head><title>Produtos</title></head><body>');
+            printWindow.document.write(htmlContent);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+        }
+
+        // Espera a nova janela carregar e então chama a função de impressão
+        if (printWindow)
+            printWindow.onload = function () {
+                printWindow.print();
+                printWindow.close();
+            };
+    };
+
+
     return (
         <div className="container">
             <div style={{ height: '600px' }}>
