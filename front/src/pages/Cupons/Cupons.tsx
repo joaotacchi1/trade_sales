@@ -93,11 +93,15 @@ const Cupons: React.FC = () => {
             printWindow.document.write('<html><head><title>.</title></head><body>');
             printWindow.document.write(htmlContent);
             printWindow.document.write('<footer>.</footer></body></html>');
+            printWindow.document.write('______________________________________');
+            printWindow.document.write('<html><head><title>.</title></head><body>');
+            printWindow.document.write(htmlContent);
+            printWindow.document.write('<footer>.</footer></body></html>');
             printWindow.onload = function () {
                 printWindow.print();
                 printWindow.close();
             };
-            /*printWindow.document.close();*/
+            printWindow.document.close();
             
         }
 
