@@ -75,7 +75,7 @@ const Cupons: React.FC = () => {
                 </tr>
                 <tr>
                     <td>${cupom.quantity.toString().replace('.', ',')}..........................</td>
-                    <td>R$ ${cupom.unit_price.toString().replace('.', ',')}</td>
+                    <td>R$ ${cupom.unit_price.toFixed(2).toString().replace('.', ',')}</td>
                 </tr>
                 <tr>
                     <td style="padding: 0">____________________________</td>
