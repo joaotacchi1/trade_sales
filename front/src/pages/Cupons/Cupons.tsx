@@ -60,7 +60,13 @@ const Cupons: React.FC = () => {
 
     const handleImprimeCupom = async () => {
         // Cria a estrutura HTML com os dados
-        let htmlContent = '<table>';
+        let htmlContent = ` <div>
+                                <h3>COMPROVANTE DE VENDA</h3>
+                                <p>CUPOM VALIDO POR 3 DIAS</p>
+                                <p>PASSADO O PRAZO, O CUPOM</p>
+                                <p>PERDE A VALIDADE</p>
+                            </div>`
+        htmlContent += '<table>';
 
         cupons.forEach((cupom, index) => {
             htmlContent += `
@@ -69,15 +75,16 @@ const Cupons: React.FC = () => {
                 </tr>
                 <tr>
                     <td>${cupom.quantity.toString().replace('.', ',')}</td>
-                    <td>${cupom.unit_price.toString().replace('.', ',')}</td>
+                    <td>R$ ${cupom.unit_price.toString().replace('.', ',')}</td>
                 </tr>
                 <tr>
                     <td style="padding: 0">....................................</td>
-                    <td style="padding: 0">.......</td>
+                    <td style="padding: 0">..............</td>
                 </tr>
             `;
         });
 
+        htmlContent += `<tr><td>Valor Total</td><td>R$ ${valorTotal.toFixed(2).toString().replace('.', ',')}</td></tr>`
         htmlContent += '</table>';
 
         let printWindow = window.open('', '_blank');
