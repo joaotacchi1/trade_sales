@@ -74,17 +74,17 @@ const Cupons: React.FC = () => {
                     <td>${cupom.description}</td>
                 </tr>
                 <tr>
-                    <td>${cupom.quantity.toString().replace('.', ',')}</td>
+                    <td>${cupom.quantity.toString().replace('.', ',')}..........................</td>
                     <td>R$ ${cupom.unit_price.toString().replace('.', ',')}</td>
                 </tr>
                 <tr>
-                    <td style="padding: 0">....................................</td>
-                    <td style="padding: 0">..............</td>
+                    <td style="padding: 0">____________________________</td>
+                    <td style="padding: 0">_________</td>
                 </tr>
             `;
         });
 
-        htmlContent += `<tr><td>Valor Total</td><td>R$ ${valorTotal.toFixed(2).toString().replace('.', ',')}</td></tr>`
+        htmlContent += `<tr><td>VALOR TOTAL................</td><td>R$ ${valorTotal.toFixed(2).toString().replace('.', ',')}</td></tr>`
         htmlContent += '</table>';
 
         let printWindow = window.open('', '_blank');
