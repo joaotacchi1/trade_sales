@@ -60,30 +60,38 @@ const Cupons: React.FC = () => {
 
     const handleImprimeCupom = async () => {
         // Cria a estrutura HTML com os dados
-        let htmlContent = '<div>';
+        let htmlContent = '<table>';
 
         cupons.forEach((cupom, index) => {
             htmlContent += `
-                <p>${cupom.description}</p>
-                <div style="display:flex; gap: 55px">
-                    <p style="height:fit-content">${cupom.quantity.toString().replace('.', ',')}</p>
-                    <p style="height:fit-content">${cupom.unit_price.toString().replace('.', ',')}</p>
-                </div>
-                <p>----------------------</p>
+                <tr>
+                    <td>${cupom.description}</td>
+                </tr>
+                <tr>
+                    <td>${cupom.quantity.toString().replace('.', ',')}</td>
+                    <td>${cupom.unit_price.toString().replace('.', ',')}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 0">....................................</td>
+                    <td style="padding: 0">.......</td>
+                </tr>
             `;
         });
+
+        htmlContent += '</table>';
 
         let printWindow = window.open('', '_blank');
 
         if (printWindow) {
-            printWindow.document.write('<body>');
+            printWindow.document.write('<html><head><title>.</title></head><body>');
             printWindow.document.write(htmlContent);
-            printWindow.document.write('</body></html>');
+            printWindow.document.write('<footer>.</footer></body></html>');
             printWindow.onload = function () {
                 printWindow.print();
                 printWindow.close();
             };
-            printWindow.document.close();
+            /*printWindow.document.close();*/
+            
         }
 
         // Espera a nova janela carregar e então chama a função de impressão
