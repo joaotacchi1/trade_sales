@@ -76,6 +76,38 @@ const Vendas: React.FC = () => {
 		tempLink.click();
 		document.body.removeChild(tempLink);
     }
+
+    const handleExportVendaHoje = async () => {
+        // Obtém a data de hoje no formato 'YYYY-MM-DD'
+        const today = new Date().toISOString().split('T')[0];
+
+        
+        // Filtra as vendas pela data de hoje
+        const csvdata = sales
+            .filter(sale => sale.sale_date === today)
+            .map(({ code, description, quantity, unit_price, sale_date }) => ({
+                CODIGO: code,
+                DESCRICAO: description,
+                QUANTIDADE: quantity.toString().replace('.', ','),
+                VALOR_UNITARIO: unit_price.toString().replace('.', ','),
+                VALOR_TOTAL: (quantity * unit_price).toFixed(2).replace('.', ','),
+                DATA_VENDA: sale_date
+            }));
+        
+        const csv = Papa.unparse(csvdata, { delimiter: ";" });
+
+        const csvBlob = new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8;' });
+
+        const csvURL = window.URL.createObjectURL(csvBlob);
+        const tempLink = document.createElement('a');
+        tempLink.href = csvURL;
+        tempLink.setAttribute('download', 'relatorio.csv');
+        document.body.appendChild(tempLink);
+        tempLink.click();
+        document.body.removeChild(tempLink);
+    }
+
+
     return (
         <div className="container">
             <div style={{ height: '600px' }}>
@@ -117,6 +149,7 @@ const Vendas: React.FC = () => {
             </div>
             <div className="d-flex justify-content-center my-3">
                 <button className="btn btn-primary" onClick={handleExportVendas}>Exportar</button>
+                <button className="btn btn-primary" onClick={handleExportVendaHoje}>baixar vendas de hoje</button>
             </div>
         </div>
     )
