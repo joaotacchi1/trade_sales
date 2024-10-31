@@ -21,22 +21,22 @@ class Sale(Base):
     __tablename__ = "sales"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement='auto')
-    id_product = Column(Integer, ForeignKey('products.id')) #chave estrangeira para id da tabela product
+    id_product = Column(Integer, ForeignKey('products.id', ondelete='RESTRICT')) #chave estrangeira para id da tabela product
     product_code = Column(Integer, index=True)
-    #unit_price = Column(Float) #tirar, talvez?
+    unit_price = Column(Float) 
     quantity = Column(Float)
     sale_date = Column(Date, default=datetime.now)
     validate = Column(String, default='null')
 
     product = relationship("Product", back_populates="sales")
-    cupom = relationship('Cupom', back_populates='sale', cascade='save-update, merge')
+    cupom = relationship('Cupom', back_populates='sale')
 
 class Cupom(Base):
     __tablename__ = 'cupom'
 
     id = Column(Integer, primary_key=True, index=True, autoincrement='auto')
-    id_sale = Column(Integer, ForeignKey('sales.id')) #chave estrangeira para id da tabela sales
-    id_product = Column(Integer, ForeignKey('products.id')) #chave estrangeira para id da tabela products
+    id_sale = Column(Integer, ForeignKey('sales.id', ondelete="RESTRICT")) #chave estrangeira para id da tabela sales
+    id_product = Column(Integer, ForeignKey('products.id', ondelete="RESTRICT")) #chave estrangeira para id da tabela products
     impression_date = Column(Date, default=datetime.now)
 
     sale = relationship('Sale', back_populates='cupom')

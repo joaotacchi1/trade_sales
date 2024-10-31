@@ -19,6 +19,7 @@ class ProductResponse(BaseModel):
 
 class SaleCreate(BaseModel):
     id_product: int
+    unit_price: float
     quantity: float = Field(..., gt=0, description='Quantity must be zero or greater')
 
 class SaleResponse(BaseModel):
