@@ -1,7 +1,13 @@
 export type Sale = {
     id: number;
     quantity: number;
+    unit_price: number;
+    code: number;
+    description: string;
+    validate: string;
+    product_code: number;
     sale_date: string;
+    user: string;
 };
 
 export type SaleProduct = {
@@ -13,4 +19,5 @@ export type SaleProduct = {
     description: string;
     unit_price: number;
     validate: string;
+    user: string;
 };

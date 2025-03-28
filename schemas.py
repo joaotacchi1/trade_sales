@@ -4,6 +4,7 @@ from datetime import date
 class ProductCreate(BaseModel):
     code: int
     description: str
+    ean: str
     unit_price: float = Field(..., gt=0, description='Price must be zero or greater')
     quantity: float = Field(..., gt=0, description='Quantity must be zero or greater')
     obs: str
@@ -11,6 +12,7 @@ class ProductCreate(BaseModel):
 class ProductResponse(BaseModel):
     id: int
     code: int
+    ean: str
     description: str
     unit_price: float
     quantity: float
@@ -20,7 +22,11 @@ class ProductResponse(BaseModel):
 class SaleCreate(BaseModel):
     id_product: int
     unit_price: float
+    code: int
+    product_code: int
+    description: str
     quantity: float = Field(..., gt=0, description='Quantity must be zero or greater')
+    user: str
 
 class SaleResponse(BaseModel):
     id: int
@@ -31,6 +37,7 @@ class SaleResponse(BaseModel):
     description: str
     unit_price: float
     validate: str
+    user: str
 
     class Config:
         orm_mode = True
@@ -56,6 +63,7 @@ class UserBase(BaseModel):
     name: str
     login: str
     role: str
+    password: str
 
 class UserLogin(BaseModel):
     login: str

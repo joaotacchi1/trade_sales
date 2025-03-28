@@ -7,6 +7,7 @@ class Product(Base):
     __tablename__ = "products"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement='auto')
+    ean = Column(String, unique=True, index=True)
     code = Column(Integer, index=True)
     description = Column(String)
     unit_price = Column(Float)
@@ -14,21 +15,22 @@ class Product(Base):
     obs = Column(String, nullable=False)
     registration_date = Column(Date, default=datetime.now)
 
-    sales = relationship('Sale', back_populates='product')
     cupom = relationship('Cupom', back_populates='product')
 
 class Sale(Base):
     __tablename__ = "sales"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement='auto')
-    id_product = Column(Integer, ForeignKey('products.id', ondelete='RESTRICT')) #chave estrangeira para id da tabela product
+    id_product = Column(Integer) #chave estrangeira para id da tabela product
+    code = Column(Integer, index=True)
     product_code = Column(Integer, index=True)
     unit_price = Column(Float) 
     quantity = Column(Float)
+    description = Column(String)
     sale_date = Column(Date, default=datetime.now)
     validate = Column(String, default='null')
+    user = Column(String, default='null')
 
-    product = relationship("Product", back_populates="sales")
     cupom = relationship('Cupom', back_populates='sale')
 
 class Cupom(Base):

@@ -13,9 +13,18 @@ const Login: React.FC = () => {
     e.preventDefault();
     try {
       await login(loginInput, passwordInput);
-      // Se o login for bem-sucedido, redirecione o usuário para a página principal ou outra página desejada
-      // Você pode fazer isso utilizando, por exemplo, o React Router
-      navigate('/produtos');
+      // Redireciona baseado na role do usuário
+      const { user } = useAuth();
+      console.log(user);
+      if (user?.role === 'admin') {
+        navigate('/produtos');
+      } else if (user?.role === 'vendedor') {
+        navigate('/vendas');
+      } else if (user?.role === 'cadastrador') {
+        navigate('/cadastro');
+      } else {
+        navigate('/'); // Redireciona para uma página padrão, caso não tenha role válida
+      }
     } catch (error) {
       if ((error as any).response) {
         if ((error as any).response.status === 401) {
@@ -32,8 +41,17 @@ const Login: React.FC = () => {
   };
   useEffect(() => {
     // Verifique se o usuário já está logado
+    const role = localStorage.getItem('role');
     if (authenticated) {
-      navigate('/produtos');  // Redirecione para /funcionarios se o usuário estiver logado
+      if (role === 'admin') {
+        navigate('/produtos');
+      } else if (role === 'vendedor') {
+        navigate('/vendas');
+      } else if (role === 'cadastrador') {
+        navigate('/cadastro');
+      } else {
+        navigate('/'); // Redireciona para uma página padrão, caso não tenha role válida
+      }  // Redirecione para /funcionarios se o usuário estiver logado
     }
   }, [authenticated, navigate]);
 

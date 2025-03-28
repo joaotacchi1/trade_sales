@@ -5,6 +5,7 @@ import api from "../../services/useApi";
 const Cupons: React.FC = () => {
     const [cupons, setCupons] = useState<Cupom[]>([]);
     const [valorTotal, setValorTotal] = useState(0);
+    var dataHoje = new Date();
 
     useEffect(() => {
         fetchCupons();
@@ -61,10 +62,8 @@ const Cupons: React.FC = () => {
     const handleImprimeCupom = async () => {
         // Cria a estrutura HTML com os dados
         let htmlContent = ` <div>
-                                <h3>COMPROVANTE DE VENDA</h3>
-                                <p>CUPOM VALIDO POR 3 DIAS</p>
-                                <p>PASSADO O PRAZO, O CUPOM</p>
-                                <p>PERDE A VALIDADE</p>
+                                <p>.</p>
+                                <p>${dataHoje.toLocaleDateString()}</p>
                             </div>`
         htmlContent += '<table>';
 
@@ -78,13 +77,15 @@ const Cupons: React.FC = () => {
                     <td>R$ ${cupom.unit_price.toFixed(2).toString().replace('.', ',')}</td>
                 </tr>
                 <tr>
-                    <td style="padding: 0">____________________________</td>
-                    <td style="padding: 0">_________</td>
+
                 </tr>
             `;
         });
 
-        htmlContent += `<tr><td>VALOR TOTAL................</td><td>R$ ${valorTotal.toFixed(2).toString().replace('.', ',')}</td></tr>`
+        htmlContent += `<tr>
+                            <td style="padding: 0">___________________________________</td></tr>
+                            <tr><td>VALOR TOTAL................</td><td>R$ ${valorTotal.toFixed(2).toString().replace('.', ',')}</td>
+                        </tr>`
         htmlContent += '</table>';
 
         let printWindow = window.open('', '_blank');
@@ -93,16 +94,12 @@ const Cupons: React.FC = () => {
             printWindow.document.write('<html><head><title>.</title></head><body>');
             printWindow.document.write(htmlContent);
             printWindow.document.write('<footer>.</footer></body></html>');
-            printWindow.document.write('______________________________________');
-            //printWindow.document.write('<html><head><title>.</title></head><body>'); LINHAS COMENTADAS PARA IMPRIMIR CUPOM 2X
-            //printWindow.document.write(htmlContent);
-            //printWindow.document.write('<footer>.</footer></body></html>');
             printWindow.onload = function () {
                 printWindow.print();
                 printWindow.close();
             };
             printWindow.document.close();
-            
+
         }
 
         // Espera a nova janela carregar e então chama a função de impressão
@@ -112,7 +109,8 @@ const Cupons: React.FC = () => {
 
     return (
         <div className="container">
-            <div style={{ height: '600px' }}>
+            <h2 className="text-center">Cupom</h2>
+            <div style={{ height: '500px' }}>
                 <div className="h-100 overflow-y-auto border mt-3">
                     <table className="table table-striped table-bordered table-hover m-0">
                         <thead>
@@ -122,7 +120,6 @@ const Cupons: React.FC = () => {
                                 <th className="col">Vl Unit</th>
                                 <th className="col">Vl Total</th>
                                 <th className="col">Data de Impressão</th>
-                                <th className="col">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -133,8 +130,6 @@ const Cupons: React.FC = () => {
                                     <td>R$ {cupom.unit_price}</td>
                                     <td>R$ {(cupom.unit_price * cupom.quantity).toFixed(2)}</td>
                                     <td>{cupom.impression_date}</td>
-                                    <td><button type="button" className="btn btn-danger" onClick={() => handleDeleteCupom(cupom.id)}>Deletar</button>
-                                    </td>
                                 </tr>
 
                             ))}
@@ -142,13 +137,14 @@ const Cupons: React.FC = () => {
                     </table>
                 </div>
             </div>
+            <div>
+                <h3 className="text-center">Valor Total: R$ {valorTotal.toFixed(2)}</h3>
+            </div>
             <div className="text-center">
                 <button type="button" className="btn btn-success m-3" onClick={() => handleImprimeCupom()}>Imprimir Cupom</button>
                 <button type="button" className="btn btn-danger" onClick={() => handleLimpaCarrinho()}>Limpar Carrinho</button>
             </div>
-            <div>
-                <h3 className="text-center">Valor Total: R$ {valorTotal.toFixed(2)}</h3>
-            </div>
+
         </div>
     )
 }
