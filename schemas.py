@@ -6,7 +6,7 @@ class ProductCreate(BaseModel):
     description: str
     ean: str
     unit_price: float = Field(..., gt=0, description='Price must be zero or greater')
-    quantity: float = Field(..., gt=0, description='Quantity must be zero or greater')
+    quantity: float = Field(..., ge=0, description='Quantity must be zero or greater')
     obs: str
 
 class ProductResponse(BaseModel):

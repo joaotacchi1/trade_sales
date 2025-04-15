@@ -123,8 +123,8 @@ const Produtos: React.FC = () => {
 
     const handleUpdateProduct = async () => {
         if (!currentProduct) return;
-        if (quantity == 0) {
-            alert('Quantidade não pode ser 0');
+        if (quantity < 0) {
+            alert('Quantidade não pode ser negativa');
             return;
         }
         try {
