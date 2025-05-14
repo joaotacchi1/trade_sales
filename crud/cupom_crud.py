@@ -14,6 +14,10 @@ def get_db():
     finally:
         db.close()
 
+@router.get("/")
+def read_root():
+    return {"message": "Welcome to the Conference API"}
+
 @router.get("/cupom/{cupom_id}", response_model=list[CupomResponse])
 def get_cupom(cupom_id: int, db: Session = Depends(get_db)):
     cupom = db.query(Cupom).join(Sale, Cupom.id_sale==Sale.id).join(Product, Cupom.id_product == Product.id).\

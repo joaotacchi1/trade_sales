@@ -13,6 +13,7 @@ const Navbar = () => {
 
     // Rotas disponíveis de acordo com a role do usuário
     const availableRoutes = [
+        { path: "/dashboard", label: "Dashboard", roles: ["admin", "vendedor", "cadastrador"] },
         { path: "/cadastro", label: "Cadastro", roles: ["admin", "cadastrador"] },
         { path: "/produtos", label: "Produtos", roles: ["admin", "vendedor"] },
         { path: "/vendas", label: "Venda", roles: ["admin", "vendedor"] },

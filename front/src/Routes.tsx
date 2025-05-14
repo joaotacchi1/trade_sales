@@ -7,6 +7,7 @@ import Vendas from "./pages/Vendas/Vendas";
 import Cupons from "./pages/Cupons/Cupons";
 import VendeProdutos from "./pages/Produtos/VendeProdutos";
 import Principal from "./pages/Principal";
+import Dashboard from "./pages/Dashboard/Dashboard";
 
 type UserRole = "admin" | "vendedor" | "cadastrador";
 
@@ -49,6 +50,11 @@ const AppRoutes = () => {
                     <Route element={<ProtectedRoute allowedRoles={['admin', 'cadastrador']} />}>
                         <Route path="/cadastro" element={<><Navbar /><Produtos /></>} />
                         <Route path="/vendas" element={<><Navbar /><Vendas /></>} />
+                    </Route>
+
+                    {/* Rota para DASHBOARD */}
+                    <Route element={<ProtectedRoute allowedRoles={['admin', 'vendedor', 'cadastrador']} />}> 
+                        <Route path="/dashboard" element={<><Navbar /><Dashboard /></>} />
                     </Route>
                 </Routes>
             </BrowserRouter>
