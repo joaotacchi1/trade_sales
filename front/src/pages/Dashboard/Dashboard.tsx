@@ -1,16 +1,22 @@
 import { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import api from '../../services/useApi';
-import { SaleProduct } from '../../types/Sales';
+import { Sale } from '../../types/Sales';
 
 interface SaleTotal {
     sale_date: string;
     total: number;
 }
 
+interface MonthlyTotal {
+    month: string;
+    total: number;
+}
+
 const Dashboard = () => {
-    const [sales, setSales] = useState<SaleProduct[]>([]);
+    const [sales, setSales] = useState<Sale[]>([]);
     const [salesTotal, setSalesTotal] = useState<SaleTotal[]>([]);
+    const [monthlyTotal, setMonthlyTotal] = useState<MonthlyTotal[]>([]);
 
     useEffect(() => {
         const fetchSales = async () => {
@@ -47,6 +53,28 @@ const Dashboard = () => {
         calculateTotalByDate();
     }, [sales]);
 
+    useEffect(() => {
+        const calculateMonthlyTotal = () => {
+            const totalByMonth = salesTotal.reduce((acc, sale) => {
+                const date = new Date(sale.sale_date);
+                const month = date.toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
+                if (!acc[month]) {
+                    acc[month] = 0;
+                }
+                acc[month] += sale.total;
+                return acc;
+            }, {} as Record<string, number>);
+
+            const monthlyTotalArray = Object.entries(totalByMonth).map(([month, total]) => ({
+                month,
+                total
+            }));
+            setMonthlyTotal(monthlyTotalArray);
+        };
+
+        calculateMonthlyTotal();
+    }, [salesTotal]);
+
     return (
         <div style={{ padding: '2rem', textAlign: 'center', justifyItems: 'center' }}>
             <h1>Dashboard de Vendas</h1>
@@ -59,6 +87,23 @@ const Dashboard = () => {
                 <Bar dataKey="total" fill="#8884d8" name="Total de Vendas" />
             </BarChart>
             <h2>Valor Total de Vendas: R$ {salesTotal.reduce((acc, sale) => acc + sale.total, 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h2>
+            <h3>Acumulado de Vendas por Mês</h3>
+            <table style={{ margin: '0 auto', borderCollapse: 'collapse', width: '80%' }}>
+                <thead>
+                    <tr>
+                        <th style={{ border: '1px solid #ddd', padding: '8px' }}>Mês</th>
+                        <th style={{ border: '1px solid #ddd', padding: '8px' }}>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {monthlyTotal.map((item) => (
+                        <tr key={item.month}>
+                            <td style={{ border: '1px solid #ddd', padding: '8px' }}>{item.month}</td>
+                            <td style={{ border: '1px solid #ddd', padding: '8px' }}>R$ {item.total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
 };

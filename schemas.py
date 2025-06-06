@@ -58,6 +58,9 @@ class CupomResponse(BaseModel):
     unit_price: float
     impression_date: date
 
+class CupomAddByEAN(BaseModel):
+    ean: str
+
 class UserBase(BaseModel):
     email: str
     name: str

@@ -1,7 +1,7 @@
 from fastapi import Depends, HTTPException, APIRouter
 from sqlalchemy.orm import Session
 from models import Sale, Product
-from schemas import SaleCreate, SaleResponse, SaleUpdate
+from schemas import SaleCreate, SaleResponse, SaleUpdate, ProductResponse
 from database import SessionLocal
 
 router = APIRouter()
@@ -78,3 +78,21 @@ def delete_sale(sale_id: int, db: Session = Depends(get_db)):
     db.delete(db_sale)
     db.commit()
     return {"message": "Sale deleted successfully"}
+
+@router.get("/lookup/ean/{ean}", response_model=ProductResponse)
+def get_product_by_ean(ean: str, db: Session = Depends(get_db)):
+    """
+    Busca um produto pelo seu código EAN.
+    Verifica se o produto existe e se tem estoque.
+    Não modifica nada, apenas retorna os dados do produto.
+    """
+    product = db.query(Product).filter(Product.ean == ean).first()
+
+    if not product:
+        raise HTTPException(status_code=404, detail="Produto com este EAN não encontrado")
+    
+    # É uma boa prática verificar o estoque já na busca
+    if product.quantity < 1:
+        raise HTTPException(status_code=400, detail="Produto sem estoque")
+
+    return product

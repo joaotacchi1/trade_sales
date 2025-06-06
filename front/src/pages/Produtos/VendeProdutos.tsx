@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, KeyboardEvent } from "react";
 import { Product } from "../../types/Product";
 import api from "../../services/useApi";
 
@@ -6,6 +6,7 @@ const VendeProdutos = () => {
     const [produtos, setProdutos] = useState<Product[]>([]);
     const [filtroName, setFiltroName] = useState('');
     const [filtroEAN, setFiltroEAN] = useState('');
+    const [eanInput, setEanInput] = useState('');
     const [saleQuantities, setSaleQuantities] = useState<{ [key: number]: number }>({});
     const user = localStorage.getItem('name');
 
@@ -21,6 +22,54 @@ const VendeProdutos = () => {
             console.error(error);
         }
     }
+    
+    // LÓGICA ATUALIZADA AQUI
+    const handleSellByEAN = async () => {
+        if (!eanInput.trim()) return;
+
+        try {
+            const currentUser = localStorage.getItem('name');
+            
+            console.log('EAN Input:', eanInput);
+            // Passo 1: Buscar o produto pelo EAN usando a nova rota GET
+            const productResponse = await api.get(`/lookup/ean/${eanInput}`);
+            const product: Product = productResponse.data;
+
+            // Passo 2: Construir o corpo da venda e chamar a rota POST /sales/ existente
+            const saleData = {
+                id_product: product.id,
+                unit_price: product.unit_price,
+                quantity: 1, // Venda por código de barras sempre terá quantidade 1
+                code: product.code,
+                description: product.description,
+                product_code: product.code,
+                user: currentUser
+            };
+
+            await api.post('/sales/', saleData);
+            
+            alert('Produto adicionado ao carrinho com sucesso!');
+            
+            fetchProducts();
+            setEanInput('');
+
+        } catch (error: any) {
+            if (error.response) {
+                alert(`Erro: ${error.response.data.detail}`);
+            } else {
+                alert('Ocorreu um erro ao processar o código de barras.');
+            }
+            console.error(error);
+        }
+    };
+    
+    const handleEanKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleSellByEAN();
+        }
+    };
+
 
     const handleSaleQuantityChange = (id: number, value: number) => {
         setSaleQuantities((prevQuantities) => ({
@@ -30,7 +79,6 @@ const VendeProdutos = () => {
     };
 
     const handleSellProduct = async (id: number) => {
-        console.log(id);
         try {
             const res = await api.get(`/products/${id}`);
             const product = res.data;
@@ -41,14 +89,13 @@ const VendeProdutos = () => {
             const data = {
                 id_product: product.id,
                 unit_price: product.unit_price,
-                quantity: saleQuantities[id] || 0, // Use the specific sale_quantity for this product
+                quantity: saleQuantities[id] || 0,
                 code: product.code,
                 description: product.description,
-                validate: product.validate,
+                validate: product.validate, // A API trata se for nulo
                 product_code: product.code,
                 user: user
             };
-            console.log(data);
             await api.post('/sales/', data);
             fetchProducts();
             handleSaleQuantityChange(id, 0);
@@ -70,8 +117,21 @@ const VendeProdutos = () => {
     return (
         <div className="container">
             <div className="my-3">
-                <input type="text" className="form-control col mb-2" placeholder="Filtrar por nome" onChange={handleFilterNameChange} value={filtroName}/>
-                <input type="text" className="form-control col" placeholder="Filtrar por EAN" onChange={handleFilterCodeChange} value={filtroEAN}/>
+                <label htmlFor="ean-input" className="form-label fw-bold">Adicionar ao Carrinho por Código de Barras</label>
+                <input
+                    type="text"
+                    id="ean-input"
+                    className="form-control"
+                    placeholder="Leia ou digite o código de barras e pressione Enter"
+                    value={eanInput}
+                    onChange={(e) => setEanInput(e.target.value)}
+                    onKeyDown={handleEanKeyDown}
+                />
+            </div>
+
+            <div className="my-3">
+                <input type="text" className="form-control col mb-2" placeholder="Filtrar por nome" onChange={handleFilterNameChange} value={filtroName} />
+                <input type="text" className="form-control col" placeholder="Filtrar por EAN" onChange={handleFilterCodeChange} value={filtroEAN} />
             </div>
             <div style={{ height: '500px' }} className="mb-3">
                 <div className="h-100 overflow-y-auto border">
@@ -94,7 +154,7 @@ const VendeProdutos = () => {
                                     && product.ean.toString().includes(filtroEAN.toString())
                                     && product.quantity > 0
                                 )
-                                .sort((a: Product, b: Product) => 
+                                .sort((a: Product, b: Product) =>
                                     a.description.localeCompare(b.description)
                                 )
                                 .map((product: Product) => (
